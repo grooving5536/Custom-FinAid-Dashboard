@@ -296,11 +296,11 @@ col5, col6 = st.columns(2)
 IMPACT_GREEN = "#70B865"
 with col5:
     st.markdown(
-        f'<div style="padding: 1rem 1rem 1rem 0; border-radius: 0.5rem;"><div style="color: #0C234B; font-size: 0.875rem; margin-bottom: 0.25rem;">Annual Total Economic Impact</div><div style="color: {IMPACT_GREEN}; font-size: 1.75rem; font-weight: 600;">${annual_impact:,.0f}</div></div>',
+        f'<div style="padding: 1rem 1rem 1rem 0; border-radius: 0.5rem;"><div style="color: #0C234B; font-size: 0.875rem; margin-bottom: 0.25rem;">Annual Total Economic Impact</div><div style="color: {IMPACT_GREEN}; font-size: 2.25rem; font-weight: 700;">${annual_impact:,.0f}</div></div>',
         unsafe_allow_html=True,
     )
 with col6:
     st.markdown(
-        f'<div style="padding: 1rem 1rem 1rem 0; border-radius: 0.5rem;"><div style="color: #0C234B; font-size: 0.875rem; margin-bottom: 0.25rem;">Cumulative Total Economic Impact ({total_years} {year_label})</div><div style="color: {IMPACT_GREEN}; font-size: 1.75rem; font-weight: 600;">${cumulative_impact:,.0f}</div></div>',
+        f'<div style="padding: 1rem 1rem 1rem 0; border-radius: 0.5rem;"><div style="color: #0C234B; font-size: 0.875rem; margin-bottom: 0.25rem;">Cumulative Total Economic Impact ({total_years} {year_label})</div><div style="color: {IMPACT_GREEN}; font-size: 2.25rem; font-weight: 700;">${cumulative_impact:,.0f}</div></div>',
         unsafe_allow_html=True,
     )
