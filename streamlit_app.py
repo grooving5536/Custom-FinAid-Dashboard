@@ -27,8 +27,6 @@ st.markdown(
     h1, h2, h3 {{ color: {NAVY} !important; }}
     /* Main header font size */
     h1 {{ font-size: 36px !important; }}
-    /* Shift top-right header logo 30px right */
-    [data-testid="stHorizontalBlock"]:first-of-type [data-testid="column"]:last-of-type img {{ margin-left: 30px; }}
     .stSidebar .stMarkdown, .stSidebar label {{ color: {NAVY} !important; }}
     </style>
     """,
@@ -175,7 +173,8 @@ LOGO_RIGHT = "public/logo-right.png"
 logo_left_ok = os.path.isfile(LOGO_LEFT)
 logo_right_ok = os.path.isfile(LOGO_RIGHT)
 
-col_logo_left, col_title, col_logo_right = st.columns([1, 2, 1])
+# 4 columns: left logo, title, spacer (shifts right logo ~30px right), right logo
+col_logo_left, col_title, col_spacer, col_logo_right = st.columns([1, 2, 0.12, 1])
 
 # Logo display widths (pixels)
 LOGO_WIDTH_LEFT = 310
@@ -194,6 +193,9 @@ with col_title:
         "Arizona Financial Aid Trust (AFAT) awards over time for M.D. students at "
         "the University of Arizona College of Medicine–Tucson."
     )
+
+with col_spacer:
+    st.write("")  # Empty column to shift right logo right
 
 with col_logo_right:
     if logo_right_ok:
