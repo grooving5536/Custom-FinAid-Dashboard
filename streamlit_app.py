@@ -240,14 +240,20 @@ if total_years > 0 and cumulative_award_values:
         yaxis_title="Amount ($)",
         yaxis_tickformat="$,.0f",
         hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            font=dict(color=COLOR_NAVY),
+        ),
         margin=dict(t=60),
         height=500,
         font=dict(color=COLOR_NAVY),
         title_font=dict(color=COLOR_NAVY),
         xaxis=dict(tickfont=dict(color=COLOR_NAVY)),
         yaxis=dict(tickfont=dict(color=COLOR_NAVY)),
-        legend=dict(font=dict(color=COLOR_NAVY)),
     )
 
     st.plotly_chart(fig, use_container_width=True)
