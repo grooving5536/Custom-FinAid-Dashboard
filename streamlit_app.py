@@ -14,6 +14,23 @@ st.set_page_config(
     layout="wide",
 )
 
+# Brand colors: navy #0C234B for text/blue, red #AB0520 for accents
+NAVY = "#0C234B"
+RED = "#AB0520"
+
+# Ensure all text and UI use brand colors
+st.markdown(
+    f"""
+    <style>
+    /* Main and sidebar text */
+    .stApp, .stApp label, .stMarkdown, .stMarkdown p, [data-testid="stMetricLabel"], [data-testid="stMetricValue"] {{ color: {NAVY} !important; }}
+    h1, h2, h3 {{ color: {NAVY} !important; }}
+    .stSidebar .stMarkdown, .stSidebar label {{ color: {NAVY} !important; }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # ---------------------------------------------------------------------------
 # Sidebar: Variables (same order as web app)
 # ---------------------------------------------------------------------------
@@ -190,15 +207,19 @@ if total_years > 0 and cumulative_award_values:
 
     fig = go.Figure()
 
+    # Brand colors: blue/navy #0C234B, red #AB0520
+    COLOR_NAVY = "#0C234B"
+    COLOR_RED = "#AB0520"
+
     fig.add_trace(
         go.Scatter(
             x=years_labels,
             y=cumulative_award_values,
             name="Cumulative Award Amount",
             mode="lines+markers",
-            line=dict(color="rgb(99, 102, 241)", width=2),
+            line=dict(color=COLOR_NAVY, width=2),
             fill="tozeroy",
-            fillcolor="rgba(99, 102, 241, 0.1)",
+            fillcolor="rgba(12, 35, 75, 0.12)",
         )
     )
     fig.add_trace(
@@ -207,9 +228,9 @@ if total_years > 0 and cumulative_award_values:
             y=award_plus_loan_values,
             name="Award Amount + Loan Cost",
             mode="lines+markers",
-            line=dict(color="rgb(220, 38, 38)", width=2),
+            line=dict(color=COLOR_RED, width=2),
             fill="tonexty",
-            fillcolor="rgba(220, 38, 38, 0.15)",
+            fillcolor="rgba(171, 5, 32, 0.15)",
         )
     )
 
@@ -222,6 +243,11 @@ if total_years > 0 and cumulative_award_values:
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         margin=dict(t=60),
         height=500,
+        font=dict(color=COLOR_NAVY),
+        title_font=dict(color=COLOR_NAVY),
+        xaxis=dict(tickfont=dict(color=COLOR_NAVY)),
+        yaxis=dict(tickfont=dict(color=COLOR_NAVY)),
+        legend=dict(font=dict(color=COLOR_NAVY)),
     )
 
     st.plotly_chart(fig, use_container_width=True)
