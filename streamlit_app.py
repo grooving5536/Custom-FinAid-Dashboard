@@ -232,7 +232,7 @@ with col1:
 with col2:
     st.metric(f"Cumulative Total ({total_years} {year_label})", f"${current_year_total:,.0f}")
 
-st.markdown("### Loan cost comparison")
+st.markdown("### Loan costs")
 col3, col4 = st.columns(2)
 with col3:
     st.metric("Annual Loan Cost (Comparison)", f"${annual_loan_cost:,.0f}")
@@ -240,4 +240,16 @@ with col4:
     st.metric(
         f"Cumulative Loan Cost ({total_years} {year_label})",
         f"${cumulative_loan_cost:,.0f}",
+    )
+
+st.markdown("### Total Economic Impact")
+annual_impact = annual_total + annual_loan_cost
+cumulative_impact = current_year_total + cumulative_loan_cost
+col5, col6 = st.columns(2)
+with col5:
+    st.metric("Annual Total Economic Impact", f"${annual_impact:,.0f}")
+with col6:
+    st.metric(
+        f"Cumulative Total Economic Impact ({total_years} {year_label})",
+        f"${cumulative_impact:,.0f}",
     )
