@@ -27,6 +27,8 @@ st.markdown(
     h1, h2, h3 {{ color: {NAVY} !important; }}
     /* Main header font size */
     h1 {{ font-size: 36px !important; }}
+    /* Shift top-right header logo 30px right */
+    [data-testid="stHorizontalBlock"]:first-of-type [data-testid="column"]:last-of-type img {{ margin-left: 30px; }}
     .stSidebar .stMarkdown, .stSidebar label {{ color: {NAVY} !important; }}
     </style>
     """,
