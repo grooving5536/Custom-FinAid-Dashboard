@@ -4,6 +4,7 @@ Interactive tool for projecting aggregate FWS and AFAT awards over time
 for M.D. students at the University of Arizona College of Medicine-Tucson.
 """
 
+import os
 import streamlit as st
 import plotly.graph_objects as go
 
@@ -144,14 +145,37 @@ current_year_total = cumulative_award_values[-1] if cumulative_award_values else
 year_label = "year" if total_years == 1 else "years"
 
 # ---------------------------------------------------------------------------
-# Header
+# Header with logos
 # ---------------------------------------------------------------------------
-st.title("Abhijay's Custom Financial Aid Projector")
-st.markdown(
-    "Interactive tool for projecting aggregate Federal Work Study (FWS) and "
-    "Arizona Financial Aid Trust (AFAT) awards over time for M.D. students at "
-    "the University of Arizona College of Medicine–Tucson."
-)
+# Paths to logos (in repo: place logo-left.png and logo-right.png in public/)
+LOGO_LEFT = "public/logo-left.png"
+LOGO_RIGHT = "public/logo-right.png"
+
+logo_left_ok = os.path.isfile(LOGO_LEFT)
+logo_right_ok = os.path.isfile(LOGO_RIGHT)
+
+col_logo_left, col_title, col_logo_right = st.columns([1, 2, 1])
+
+with col_logo_left:
+    if logo_left_ok:
+        st.image(LOGO_LEFT, use_container_width=True)
+    else:
+        st.write("")
+
+with col_title:
+    st.title("Abhijay's Custom Financial Aid Projector")
+    st.markdown(
+        "Interactive tool for projecting aggregate Federal Work Study (FWS) and "
+        "Arizona Financial Aid Trust (AFAT) awards over time for M.D. students at "
+        "the University of Arizona College of Medicine–Tucson."
+    )
+
+with col_logo_right:
+    if logo_right_ok:
+        st.image(LOGO_RIGHT, use_container_width=True)
+    else:
+        st.write("")
+
 st.markdown("---")
 
 # ---------------------------------------------------------------------------
