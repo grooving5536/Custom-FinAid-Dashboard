@@ -28,8 +28,6 @@ st.markdown(
     /* Main header font size */
     h1 {{ font-size: 36px !important; }}
     .stSidebar .stMarkdown, .stSidebar label {{ color: {NAVY} !important; }}
-    /* Total Economic Impact metric values: green */
-    [data-testid="stMetricValue"]:nth-of-type(5), [data-testid="stMetricValue"]:nth-of-type(6) {{ color: #70B865 !important; }}
     </style>
     """,
     unsafe_allow_html=True,
@@ -294,10 +292,15 @@ st.markdown("### Total Economic Impact")
 annual_impact = annual_total + annual_loan_cost
 cumulative_impact = current_year_total + cumulative_loan_cost
 col5, col6 = st.columns(2)
+# Use custom HTML so we can set value color to #70B865
+IMPACT_GREEN = "#70B865"
 with col5:
-    st.metric("Annual Total Economic Impact", f"${annual_impact:,.0f}")
+    st.markdown(
+        f'<div style="padding: 1rem 1rem 1rem 0; border-radius: 0.5rem;"><div style="color: #0C234B; font-size: 0.875rem; margin-bottom: 0.25rem;">Annual Total Economic Impact</div><div style="color: {IMPACT_GREEN}; font-size: 1.75rem; font-weight: 600;">${annual_impact:,.0f}</div></div>',
+        unsafe_allow_html=True,
+    )
 with col6:
-    st.metric(
-        f"Cumulative Total Economic Impact ({total_years} {year_label})",
-        f"${cumulative_impact:,.0f}",
+    st.markdown(
+        f'<div style="padding: 1rem 1rem 1rem 0; border-radius: 0.5rem;"><div style="color: #0C234B; font-size: 0.875rem; margin-bottom: 0.25rem;">Cumulative Total Economic Impact ({total_years} {year_label})</div><div style="color: {IMPACT_GREEN}; font-size: 1.75rem; font-weight: 600;">${cumulative_impact:,.0f}</div></div>',
+        unsafe_allow_html=True,
     )
