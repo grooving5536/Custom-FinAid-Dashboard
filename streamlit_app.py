@@ -25,6 +25,8 @@ st.markdown(
     /* Main and sidebar text */
     .stApp, .stApp label, .stMarkdown, .stMarkdown p, [data-testid="stMetricLabel"], [data-testid="stMetricValue"] {{ color: {NAVY} !important; }}
     h1, h2, h3 {{ color: {NAVY} !important; }}
+    /* Main header font size */
+    h1 {{ font-size: 30px !important; }}
     .stSidebar .stMarkdown, .stSidebar label {{ color: {NAVY} !important; }}
     </style>
     """,
