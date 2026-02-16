@@ -157,7 +157,7 @@ logo_right_ok = os.path.isfile(LOGO_RIGHT)
 col_logo_left, col_title, col_logo_right = st.columns([1, 2, 1])
 
 # Logo display widths (pixels)
-LOGO_WIDTH_LEFT = 270
+LOGO_WIDTH_LEFT = 290
 LOGO_WIDTH_RIGHT = 240
 
 with col_logo_left:
