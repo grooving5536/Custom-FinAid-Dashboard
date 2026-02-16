@@ -208,6 +208,8 @@ if total_years > 0 and cumulative_award_values:
             name="Award Amount + Loan Cost",
             mode="lines+markers",
             line=dict(color="rgb(220, 38, 38)", width=2),
+            fill="tonexty",
+            fillcolor="rgba(220, 38, 38, 0.15)",
         )
     )
 
