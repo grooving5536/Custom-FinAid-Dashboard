@@ -47,7 +47,7 @@ total_students = st.sidebar.slider(
 )
 
 afat_pct = st.sidebar.slider(
-    "% Awarded AFAT",
+    "Percent Awarded AFAT (%)",
     min_value=0,
     max_value=50,
     value=25,
@@ -56,10 +56,10 @@ afat_pct = st.sidebar.slider(
 
 # Avg AFAT fixed at 3000
 avg_afat_amount = 3000
-st.sidebar.caption("Avg AFAT Amount per Student: **$3,000** (fixed)")
+st.sidebar.caption("Average AFAT Amount Per Student: **$3,000** (fixed)")
 
 fws_pct = st.sidebar.slider(
-    "% Awarded FWS",
+    "Percent Awarded FWS (%)",
     min_value=0,
     max_value=50,
     value=20,
@@ -67,7 +67,7 @@ fws_pct = st.sidebar.slider(
 )
 
 avg_fws_amount = st.sidebar.slider(
-    "Avg FWS Amount per Student",
+    "Average FWS Amount Per Student ($)",
     min_value=3000,
     max_value=15000,
     value=3000,
