@@ -28,6 +28,8 @@ st.markdown(
     /* Main header font size */
     h1 {{ font-size: 36px !important; }}
     .stSidebar .stMarkdown, .stSidebar label {{ color: {NAVY} !important; }}
+    /* Total Economic Impact metric values: green */
+    [data-testid="stMetricValue"]:nth-of-type(5), [data-testid="stMetricValue"]:nth-of-type(6) {{ color: #70B865 !important; }}
     </style>
     """,
     unsafe_allow_html=True,
@@ -285,6 +287,8 @@ with col4:
         f"Cumulative Loan Cost ({total_years} {year_label})",
         f"${cumulative_loan_cost:,.0f}",
     )
+
+st.divider()
 
 st.markdown("### Total Economic Impact")
 annual_impact = annual_total + annual_loan_cost
