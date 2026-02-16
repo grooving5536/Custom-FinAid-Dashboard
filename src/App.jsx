@@ -32,6 +32,7 @@ function App() {
   const [avgFwsAmount, setAvgFwsAmount] = useState(3000)
   const [totalYears, setTotalYears] = useState(10)
   const [loanInterestRate, setLoanInterestRate] = useState(8.94) // Percentage value
+  const [loanOriginationFee, setLoanOriginationFee] = useState(4.228) // Percentage value (e.g. 4.228%)
 
   // Calculate aggregate dollar amounts for each year
   const chartData = useMemo(() => {
@@ -60,25 +61,6 @@ function App() {
       values: data
     }
   }, [totalStudents, afatPercentage, fwsPercentage, avgAfatAmount, avgFwsAmount, totalYears])
-
-  const chartConfig = {
-    labels: chartData.labels || [],
-    datasets: [
-      {
-        label: 'Cumulative Aggregate Dollar Amount',
-        data: chartData.values || [],
-        borderColor: 'rgb(99, 102, 241)',
-        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-        fill: true,
-        tension: 0.4,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointBackgroundColor: 'rgb(99, 102, 241)',
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
-      },
-    ],
-  }
 
   const options = {
     responsive: true,
@@ -150,9 +132,9 @@ function App() {
     }
   }
 
-  // Loan constants
-  const LOAN_ORIGINATION_FEE_RATE = 0.04228 // 4.228%
-  const LOAN_INTEREST_RATE = loanInterestRate / 100 // Convert percentage to decimal
+  // Loan rates (convert percentage to decimal)
+  const LOAN_ORIGINATION_FEE_RATE = loanOriginationFee / 100
+  const LOAN_INTEREST_RATE = loanInterestRate / 100
 
   const currentYearTotal = chartData.values && chartData.values.length > 0 ? chartData.values[chartData.values.length - 1] : 0
   const afatStudents = Math.floor((totalStudents * afatPercentage) / 100)
@@ -161,53 +143,92 @@ function App() {
   const yearFwsTotal = fwsStudents * avgFwsAmount
   const annualTotal = yearAfatTotal + yearFwsTotal
 
-  // Calculate loan costs
-  // If grants total $X, to receive $X as a loan, student needs to borrow $X / (1 - origination_fee)
-  // Origination fee cost = borrowed amount * origination_fee_rate
-  // Interest accrues on the borrowed amount each year
+  // Calculate loan costs and cumulative loan cost per year (for chart)
   const calculateLoanCosts = useMemo(() => {
     if (totalYears === 0) {
       return {
         annualLoanCost: 0,
-        cumulativeLoanCost: 0
+        cumulativeLoanCost: 0,
+        cumulativeLoanCostByYear: []
       }
     }
 
-    // Annual loan cost: origination fee + interest for one year (with daily compounding)
-    // To receive annualTotal, need to borrow: annualTotal / (1 - LOAN_ORIGINATION_FEE_RATE)
     const annualBorrowedAmount = annualTotal / (1 - LOAN_ORIGINATION_FEE_RATE)
     const annualOriginationFee = annualBorrowedAmount * LOAN_ORIGINATION_FEE_RATE
-    
-    // Daily compounding: interest = Principal * ((1 + rate/365)^365 - 1)
     const dailyRate = LOAN_INTEREST_RATE / 365
+
     const annualInterest = annualBorrowedAmount * (Math.pow(1 + dailyRate, 365) - 1)
     const annualLoanCost = annualOriginationFee + annualInterest
 
-    // Cumulative loan cost: sum of origination fees + accumulated interest over all years
-    // Each year, student borrows the same amount to receive annualTotal
-    // Total origination fees over all years
     const totalOriginationFees = annualOriginationFee * totalYears
-    
-    // Cumulative interest with daily compounding:
-    // Each year's loan compounds daily for the remaining years
-    // Year 1 loan compounds for totalYears years
-    // Year 2 loan compounds for (totalYears - 1) years, etc.
     let cumulativeInterest = 0
     for (let year = 1; year <= totalYears; year++) {
       const yearsRemaining = totalYears - year + 1
       const daysRemaining = yearsRemaining * 365
-      // Interest = Principal * ((1 + daily_rate)^days - 1)
       const yearInterest = annualBorrowedAmount * (Math.pow(1 + dailyRate, daysRemaining) - 1)
       cumulativeInterest += yearInterest
     }
-    
     const cumulativeLoanCost = totalOriginationFees + cumulativeInterest
+
+    // Cumulative loan cost at end of each year (for chart red line)
+    const cumulativeLoanCostByYear = []
+    for (let k = 1; k <= totalYears; k++) {
+      const originationThroughK = annualOriginationFee * k
+      let interestThroughK = 0
+      for (let j = 1; j <= k; j++) {
+        const yearsRemaining = k - j + 1
+        const daysRemaining = yearsRemaining * 365
+        interestThroughK += annualBorrowedAmount * (Math.pow(1 + dailyRate, daysRemaining) - 1)
+      }
+      cumulativeLoanCostByYear.push(originationThroughK + interestThroughK)
+    }
 
     return {
       annualLoanCost,
-      cumulativeLoanCost
+      cumulativeLoanCost,
+      cumulativeLoanCostByYear
     }
-  }, [annualTotal, totalYears, loanInterestRate])
+  }, [annualTotal, totalYears, loanInterestRate, loanOriginationFee])
+
+  // Red line: grant cumulative + cumulative loan cost per year (must be after calculateLoanCosts)
+  const grantPlusLoanValues = useMemo(() => {
+    const grant = chartData.values || []
+    const loanByYear = calculateLoanCosts.cumulativeLoanCostByYear || []
+    if (grant.length === 0 || grant.length !== loanByYear.length) return []
+    return grant.map((g, i) => g + (loanByYear[i] ?? 0))
+  }, [chartData.values, calculateLoanCosts.cumulativeLoanCostByYear])
+
+  const chartConfig = {
+    labels: chartData.labels || [],
+    datasets: [
+      {
+        label: 'Cumulative Award Amount',
+        data: chartData.values || [],
+        borderColor: 'rgb(99, 102, 241)',
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: 'rgb(99, 102, 241)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+      },
+      {
+        label: 'Award Amount + Loan Cost',
+        data: grantPlusLoanValues,
+        borderColor: 'rgb(220, 38, 38)',
+        backgroundColor: 'rgba(220, 38, 38, 0.05)',
+        fill: false,
+        tension: 0.4,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: 'rgb(220, 38, 38)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+      },
+    ],
+  }
 
   const annualSavings = annualTotal - calculateLoanCosts.annualLoanCost
   const cumulativeSavings = currentYearTotal - calculateLoanCosts.cumulativeLoanCost
@@ -330,6 +351,16 @@ function App() {
           </div>
 
           <div className="control-group">
+            <label htmlFor="avgAfatAmount">
+              Avg AFAT Amount per Student
+              <span className="value-display">${avgAfatAmount.toLocaleString()}</span>
+            </label>
+            <div className="fixed-value-display">
+              Fixed at $3,000
+            </div>
+          </div>
+
+          <div className="control-group">
             <label htmlFor="fwsPercentage">
               % Awarded FWS
               <span className="value-display">{fwsPercentage}%</span>
@@ -356,16 +387,6 @@ function App() {
             </div>
             <div className="calculated-info">
               {fwsStudents} students × ${avgFwsAmount.toLocaleString()} = ${yearFwsTotal.toLocaleString()}
-            </div>
-          </div>
-
-          <div className="control-group">
-            <label htmlFor="avgAfatAmount">
-              Avg AFAT Amount per Student
-              <span className="value-display">${avgAfatAmount.toLocaleString()}</span>
-            </label>
-            <div className="fixed-value-display">
-              Fixed at $3,000
             </div>
           </div>
 
@@ -397,6 +418,60 @@ function App() {
           </div>
 
           <div className="control-group">
+            <label htmlFor="loanOriginationFee">
+              Loan Origination Fee
+              <span className="value-display">{loanOriginationFee.toFixed(2)}%</span>
+            </label>
+            <input
+              id="loanOriginationFee"
+              type="range"
+              min="0"
+              max="5"
+              step="0.01"
+              value={loanOriginationFee}
+              onChange={(e) => setLoanOriginationFee(Number(e.target.value))}
+            />
+            <div className="input-wrapper">
+              <input
+                type="number"
+                min="0"
+                max="5"
+                step="0.01"
+                value={loanOriginationFee}
+                onChange={(e) => setLoanOriginationFee(Number(e.target.value))}
+                className="number-input"
+              />
+            </div>
+          </div>
+
+          <div className="control-group">
+            <label htmlFor="loanInterestRate">
+              Loan Interest Rate
+              <span className="value-display">{loanInterestRate.toFixed(2)}%</span>
+            </label>
+            <input
+              id="loanInterestRate"
+              type="range"
+              min="5.30"
+              max="10.50"
+              step="0.01"
+              value={loanInterestRate}
+              onChange={(e) => setLoanInterestRate(Number(e.target.value))}
+            />
+            <div className="input-wrapper">
+              <input
+                type="number"
+                min="5.30"
+                max="10.50"
+                step="0.01"
+                value={loanInterestRate}
+                onChange={(e) => setLoanInterestRate(Number(e.target.value))}
+                className="number-input"
+              />
+            </div>
+          </div>
+
+          <div className="control-group">
             <label htmlFor="totalYears">
               Total Years Projected
               <span className="value-display">{totalYears} {totalYears === 1 ? 'year' : 'years'}</span>
@@ -418,33 +493,6 @@ function App() {
                 step="1"
                 value={totalYears}
                 onChange={(e) => setTotalYears(Number(e.target.value))}
-                className="number-input"
-              />
-            </div>
-          </div>
-
-          <div className="control-group">
-            <label htmlFor="loanInterestRate">
-              Grad PLUS Loan Interest Rate
-              <span className="value-display">{loanInterestRate.toFixed(2)}%</span>
-            </label>
-            <input
-              id="loanInterestRate"
-              type="range"
-              min="5.30"
-              max="10.50"
-              step="0.01"
-              value={loanInterestRate}
-              onChange={(e) => setLoanInterestRate(Number(e.target.value))}
-            />
-            <div className="input-wrapper">
-              <input
-                type="number"
-                min="5.30"
-                max="10.50"
-                step="0.01"
-                value={loanInterestRate}
-                onChange={(e) => setLoanInterestRate(Number(e.target.value))}
                 className="number-input"
               />
             </div>
