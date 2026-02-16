@@ -156,9 +156,12 @@ logo_right_ok = os.path.isfile(LOGO_RIGHT)
 
 col_logo_left, col_title, col_logo_right = st.columns([1, 2, 1])
 
+# Same pixel width for both logos so they display evenly
+LOGO_WIDTH = 180
+
 with col_logo_left:
     if logo_left_ok:
-        st.image(LOGO_LEFT, use_container_width=True)
+        st.image(LOGO_LEFT, width=LOGO_WIDTH)
     else:
         st.write("")
 
@@ -172,7 +175,7 @@ with col_title:
 
 with col_logo_right:
     if logo_right_ok:
-        st.image(LOGO_RIGHT, use_container_width=True)
+        st.image(LOGO_RIGHT, width=LOGO_WIDTH)
     else:
         st.write("")
 
