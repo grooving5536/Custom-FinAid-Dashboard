@@ -7,7 +7,7 @@ Interactive web application for projecting aggregate Federal Work Study (FWS) an
 - **Interactive chart**: Cumulative aggregate dollar amounts over projected years
 - **Real-time updates**: Chart and summary cards update as you adjust variables
 - **Variable controls**: Sliders and number inputs for all parameters
-- **Grant vs. loan comparison**: Annual and cumulative totals, plus comparison to Graduate PLUS loan costs (origination fee + daily-compounded interest)
+- **Grant vs. loan comparison**: Annual and cumulative totals, plus comparison to Graduate PLUS loan costs (origination fee + simple interest)
 
 ## Variables
 
@@ -17,7 +17,8 @@ Interactive web application for projecting aggregate Federal Work Study (FWS) an
 - Average AFAT amount per student (fixed at $3,000)
 - Average FWS amount per student ($3,000–$15,000)
 - Total years projected (0–30)
-- Grad PLUS loan interest rate (5.30%–10.50%)
+- Loan origination fee (0–5%)
+- Loan interest rate (5.30%–10.50%)
 
 ## Getting Started
 
@@ -57,4 +58,4 @@ npm run preview
 ## How it works
 
 - Grant totals: AFAT and FWS amounts based on student counts and average awards.
-- Loan comparison: Same amounts as Graduate PLUS loans with 4.228% origination fee and daily-compounded interest at the selected rate.
+- Loan comparison: Same amounts as Graduate PLUS loans with origination fee (adjustable) and **simple interest** at the selected annual rate. Interest accrues as principal × rate × years outstanding for each annual disbursement (no compounding). This matches simple daily accrual at rate/365 with interest not reinvested.

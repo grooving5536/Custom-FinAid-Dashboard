@@ -119,32 +119,30 @@ for _ in range(total_years):
     cumulative += annual_total
     cumulative_award_values.append(cumulative)
 
-# Loan cost calculations (daily compounding)
+# Loan cost calculations (simple interest: accrues at annual rate × years outstanding;
+# equivalent to simple daily accrual P*(r/365) per day with no compounding of interest.)
 if total_years > 0 and annual_total > 0:
     annual_borrowed = annual_total / (1 - loan_origination_rate)
     annual_origination_fee = annual_borrowed * loan_origination_rate
-    daily_rate = loan_interest_decimal / 365
 
-    # Annual loan cost (one year)
-    annual_interest = annual_borrowed * (pow(1 + daily_rate, 365) - 1)
+    # Annual loan cost (one year on one loan): origination + one year of simple interest
+    annual_interest = annual_borrowed * loan_interest_decimal
     annual_loan_cost = annual_origination_fee + annual_interest
 
-    # Cumulative loan cost at end of each year (for chart)
+    # Cumulative loan cost at end of each year k (for chart): each year j's loan accrues
+    # simple interest for (k - j + 1) years on principal annual_borrowed
     cumulative_loan_cost_by_year = []
     for k in range(1, total_years + 1):
         origination_through_k = annual_origination_fee * k
-        interest_through_k = 0
+        interest_through_k = 0.0
         for j in range(1, k + 1):
-            years_remaining = k - j + 1
-            days_remaining = years_remaining * 365
-            interest_through_k += annual_borrowed * (
-                pow(1 + daily_rate, days_remaining) - 1
-            )
+            years_outstanding = k - j + 1
+            interest_through_k += annual_borrowed * loan_interest_decimal * years_outstanding
         cumulative_loan_cost_by_year.append(origination_through_k + interest_through_k)
 
     total_origination_fees = annual_origination_fee * total_years
     cumulative_interest = sum(
-        annual_borrowed * (pow(1 + daily_rate, (total_years - j + 1) * 365) - 1)
+        annual_borrowed * loan_interest_decimal * (total_years - j + 1)
         for j in range(1, total_years + 1)
     )
     cumulative_loan_cost = total_origination_fees + cumulative_interest

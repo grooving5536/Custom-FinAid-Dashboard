@@ -155,18 +155,16 @@ function App() {
 
     const annualBorrowedAmount = annualTotal / (1 - LOAN_ORIGINATION_FEE_RATE)
     const annualOriginationFee = annualBorrowedAmount * LOAN_ORIGINATION_FEE_RATE
-    const dailyRate = LOAN_INTEREST_RATE / 365
 
-    const annualInterest = annualBorrowedAmount * (Math.pow(1 + dailyRate, 365) - 1)
+    // Simple interest: annual rate × years outstanding (no compounding; same as P*(r/365) per day summed)
+    const annualInterest = annualBorrowedAmount * LOAN_INTEREST_RATE
     const annualLoanCost = annualOriginationFee + annualInterest
 
     const totalOriginationFees = annualOriginationFee * totalYears
     let cumulativeInterest = 0
     for (let year = 1; year <= totalYears; year++) {
-      const yearsRemaining = totalYears - year + 1
-      const daysRemaining = yearsRemaining * 365
-      const yearInterest = annualBorrowedAmount * (Math.pow(1 + dailyRate, daysRemaining) - 1)
-      cumulativeInterest += yearInterest
+      const yearsOutstanding = totalYears - year + 1
+      cumulativeInterest += annualBorrowedAmount * LOAN_INTEREST_RATE * yearsOutstanding
     }
     const cumulativeLoanCost = totalOriginationFees + cumulativeInterest
 
@@ -176,9 +174,8 @@ function App() {
       const originationThroughK = annualOriginationFee * k
       let interestThroughK = 0
       for (let j = 1; j <= k; j++) {
-        const yearsRemaining = k - j + 1
-        const daysRemaining = yearsRemaining * 365
-        interestThroughK += annualBorrowedAmount * (Math.pow(1 + dailyRate, daysRemaining) - 1)
+        const yearsOutstanding = k - j + 1
+        interestThroughK += annualBorrowedAmount * LOAN_INTEREST_RATE * yearsOutstanding
       }
       cumulativeLoanCostByYear.push(originationThroughK + interestThroughK)
     }
